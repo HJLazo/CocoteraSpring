@@ -13,34 +13,32 @@
         <div class="col-md-6">
             <h3>Order Products</h3>
 
-            <!-- Client Selection Dropdown -->
-            <div class="mb-3">
-                <label for="clientId" class="form-label">Select Client:</label>
-                <select id="clientId" name="clientId" class="form-select" required>
-                    <option value="">Select Client</option>
-                    <option th:each="client : ${clients}" th:value="${client.clientId}" th:text="${client.name}"></option>
-                </select>
-            </div>
+            <form action="/createOrder" method="post" th:object="${orderDTO}">
+                <!-- Client selection -->
+                <div class="form-group">
+                    <label for="clientId">Client</label>
+                    <select id="clientId" th:field="*{clientId}" class="form-control" required>
+                        <option value="" disabled selected>Select a client</option>
+                        <option th:each="client : ${clients}" th:value="${client.clientId}" th:text="${client.name}"></option>
+                    </select>
+                </div>
 
-            <form action="/createOrder" method="post" id="orderForm">
-                <div th:each="product : ${products}">
-                    <div class="card mb-3">
-                        <img th:src="${product.url}" class="card-img-top" alt="Product Image" style="width: 150px; height: 150px; object-fit: cover;">
-                        <div class="card-body">
-                            <h5 class="card-title" th:text="${product.name}">Product Name</h5>
-                            <p class="card-text" th:text="${product.description}">Product Description</p>
-                            <p class="card-text"><strong>Price: </strong> $<span th:text="${product.price}">0.00</span></p>
+                <!-- Product list with quantity adjustment -->
+                <div class="products">
+                    <div th:each="product : ${products}">
+                        <div class="product-item">
+                            <img th:src="${product.url}" style="width: 100px; height: auto;" alt="Product Image"/>
+                            <span th:text="${product.name}"></span>
+                            <span class="product-price" th:text="${product.price}"></span>
 
-                            <!-- Quantity input and buttons -->
-                            <div class="d-flex justify-content-between align-items-center">
-                                <button type="button" class="btn btn-danger" data-product-id="[[${product.productId}]]" onclick="updateQuantity(this, -1)">-</button>
-                                <input type="text" id="quantity-[[${product.productId}]]" name="quantity-[[${product.productId}]]" value="0" class="form-control text-center" style="width: 50px;">
-                                <button type="button" class="btn btn-success" data-product-id="[[${product.productId}]]" onclick="updateQuantity(this, 1)">+</button>
-                            </div>
+                            <button type="button" class="btn btn-danger" th:onclick="updateQuantity([[${product.productId}]], [[${product.price}]], -1)">-</button>
+                            <input type="text" th:id="'quantity_' + ${product.productId}" value="0" readonly/>
+                            <button type="button" class="btn btn-success" th:onclick="updateQuantity([[${product.productId}]], [[${product.price}]], 1)">+</button>
                         </div>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary mt-3">Submit Order</button>
+
+                <button type="submit" class="btn btn-primary">Create Order</button>
             </form>
         </div>
 
@@ -56,41 +54,20 @@
 </div>
 
 <script>
-    // JavaScript function to update quantity
-    function updateQuantity(button, change) {
-        const productId = button.getAttribute('data-product-id');
-        const quantityField = document.getElementById('quantity-' + productId);
-        let currentQuantity = parseInt(quantityField.value) || 0;
-        currentQuantity += change;
+    let totalItems = 0;
+    let totalPrice = 0;
 
-        // Ensure quantity doesn't go below 0
-        if (currentQuantity < 0) {
-            currentQuantity = 0;
-        }
+    function updateQuantity(productId, productPrice, delta) {
+        const input = document.getElementById('quantity_' + productId);
+        let currentValue = parseInt(input.value) || 0;
+        let newValue = Math.max(0, currentValue + delta);  // Ensure the quantity doesn't go below 0
+        input.value = newValue;
+        console.log(input.value)
 
-        quantityField.value = currentQuantity;
+        totalItems += delta;
+        totalPrice += delta * productPrice;
+        console.log(totalPrice)
 
-        // Update the order summary
-        updateOrderSummary();
-    }
-
-    // JavaScript function to update order summary
-    function updateOrderSummary() {
-        let totalItems = 0;
-        let totalPrice = 0.00;
-
-        // Loop through all product quantities
-        document.querySelectorAll('input[id^="quantity-"]').forEach(input => {
-            const productQuantity = parseInt(input.value) || 0;
-            if (productQuantity > 0) {
-                const productId = input.id.replace('quantity-', '');
-                const productPrice = parseFloat(document.querySelector(`[data-product-id="${productId}"]`).closest('.card-body').querySelector('span').textContent);
-                totalItems += productQuantity;
-                totalPrice += (productQuantity * productPrice);
-            }
-        });
-
-        // Update the order summary display
         document.getElementById('totalItems').textContent = totalItems;
         document.getElementById('totalPrice').textContent = totalPrice.toFixed(2);
     }

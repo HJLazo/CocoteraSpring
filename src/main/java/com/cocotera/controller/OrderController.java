@@ -42,6 +42,7 @@ public class OrderController {
         List<Product> products = productsRepository.findAll();
         model.addAttribute("products", products);
         model.addAttribute("clients", clients);
+        model.addAttribute("orderDTO", new OrderDTO());
         return "orders";
     }
 
