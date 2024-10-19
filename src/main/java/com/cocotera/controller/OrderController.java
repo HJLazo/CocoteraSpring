@@ -48,12 +48,15 @@ public class OrderController {
 
     @PostMapping("/createOrder")
     public String createOrder(@ModelAttribute OrderDTO orderDTO, Model model) {
+        if (orderDTO.getOrderItems() == null || orderDTO.getOrderItems().isEmpty()) {
+            throw new RuntimeException("No items in the order");
+        }
+
         Order order = new Order();
         order.setOrderId(UUID.randomUUID().toString());
         order.setClientId(orderDTO.getClientId());
         order.setTotal(BigDecimal.ZERO);
         Order savedOrder = orderRepository.save(order);
-
 
         BigDecimal total = BigDecimal.ZERO;
 
@@ -61,7 +64,6 @@ public class OrderController {
             if (itemDTO.getQuantity() > 0) {
                 Product product = productsRepository.findById(itemDTO.getProductId())
                         .orElseThrow(() -> new RuntimeException("Product not found"));
-
 
                 if (product.getPrice() == 0) {
                     throw new RuntimeException("Product price cannot be null");
@@ -71,7 +73,6 @@ public class OrderController {
                 orderItem.setOrderId(savedOrder.getOrderId());
                 orderItem.setProductId(product.getProductId());
                 orderItem.setQuantity(itemDTO.getQuantity());
-
 
                 BigDecimal itemTotalPrice = BigDecimal.valueOf(product.getPrice());
                 orderItem.setPrice(itemTotalPrice);
@@ -85,7 +86,7 @@ public class OrderController {
         orderRepository.save(savedOrder);
 
         model.addAttribute("order", savedOrder);
-        return "orderList";
+        return "redirect:/orderList";
     }
 
 

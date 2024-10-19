@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "`order`") // Escaped with backticks
+@Table(name = "orders")
 @Data
 public class Order {
     @Id
