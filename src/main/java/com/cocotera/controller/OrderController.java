@@ -38,14 +38,17 @@ public class OrderController {
 
     @GetMapping("/orders")
     public String showOrderForm(Model model) {
+        List<Client> clients = clientRepository.findAll();
         List<Product> products = productsRepository.findAll();
         model.addAttribute("products", products);
+        model.addAttribute("clients", clients);
         return "orders";
     }
 
     @PostMapping("/createOrder")
     public String createOrder(@ModelAttribute OrderDTO orderDTO, Model model) {
         Order order = new Order();
+        order.setOrderId(UUID.randomUUID().toString());
         order.setClientId(orderDTO.getClientId());
         order.setTotal(BigDecimal.ZERO);
         Order savedOrder = orderRepository.save(order);
@@ -81,6 +84,14 @@ public class OrderController {
         orderRepository.save(savedOrder);
 
         model.addAttribute("order", savedOrder);
-        return "orderSuccess";
+        return "orderList";
+    }
+
+
+    @GetMapping("/orderList")
+    public String showOrderList(Model model) {
+        List<Order> orders = orderRepository.findAll();
+        model.addAttribute("orders", orders);
+        return "orderList";
     }
 }
