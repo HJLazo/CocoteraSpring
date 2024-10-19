@@ -2,9 +2,8 @@ package com.cocotera.interfaces;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import com.cocotera.models.User;
+import com.cocotera.models.Client;
 
 @Repository
-public interface IUserRepository extends JpaRepository<User, String> {
-    User findByName(String name);
+public interface IClientRepository extends JpaRepository<Client, String> {
 }

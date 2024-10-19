@@ -1,7 +1,8 @@
 package com.cocotera.controller;
 
+import com.cocotera.interfaces.IClientRepository;
 import com.cocotera.interfaces.IProductsRepository;
-import com.cocotera.models.Product;
+import com.cocotera.models.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,23 +15,23 @@ import java.util.List;
 import java.util.UUID;
 
 @Controller
-public class ProductController {
+public class ClientController {
 
     @Autowired
-    private IProductsRepository productRepository;
+    private IClientRepository clientRepository;
 
-    @GetMapping("/products")
+    @GetMapping("/clients")
     public String showProducts(Model model) {
-        List<Product> products = productRepository.findAll();
-        model.addAttribute("products", products);
-        model.addAttribute("product", new Product());
-        return "products";
+        List<Client> clients = clientRepository.findAll();
+        model.addAttribute("clients", clients);
+        model.addAttribute("client", new Client());
+        return "clients";
     }
 
-    @PostMapping("/addProduct")
-    public String addProduct(@ModelAttribute Product product) {
-        product.setProductId(UUID.randomUUID().toString());
-        productRepository.save(product);
-        return "redirect:/products";
+    @PostMapping("/addClient")
+    public String addProduct(@ModelAttribute Client client) {
+        client.setClientId(UUID.randomUUID().toString());
+        clientRepository.save(client);
+        return "redirect:/clients";
     }
 }
