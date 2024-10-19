@@ -11,11 +11,7 @@ import java.sql.Timestamp;
 public class Order {
     @Id
     private String orderId;
-
-    @ManyToOne
-    @JoinColumn(name = "client_id", nullable = false)
-    private Client client;
-
+    private String clientId;
     private BigDecimal total;
 
 }

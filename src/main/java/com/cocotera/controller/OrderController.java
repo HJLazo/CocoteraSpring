@@ -1,10 +1,15 @@
 package com.cocotera.controller;
 
+import com.cocotera.dto.OrderDTO;
+import com.cocotera.dto.OrderItemDTO;
 import com.cocotera.interfaces.IClientRepository;
+import com.cocotera.interfaces.IOrderItemRepository;
 import com.cocotera.interfaces.IOrderRepository;
 import com.cocotera.interfaces.IProductsRepository;
 import com.cocotera.models.Client;
 import com.cocotera.models.Order;
+import com.cocotera.models.OrderItem;
+import com.cocotera.models.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +17,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,19 +33,54 @@ public class OrderController {
     @Autowired
     private IProductsRepository productsRepository;
 
+    @Autowired
+    private IOrderItemRepository orderItemRepository;
+
     @GetMapping("/orders")
-    public String showOrders(Model model){
-        List<Order> orders = orderRepository.findAll();
-        List<Client> clients = clientRepository.findAll(); // to select a client
-        model.addAttribute("orders", orders);
-        model.addAttribute("clients", clients);
-        model.addAttribute("order", new Order()); // new empty order for the form
-        return "orders"; // Thymeleaf template name
+    public String showOrderForm(Model model) {
+        List<Product> products = productsRepository.findAll();
+        model.addAttribute("products", products);
+        return "orders";
     }
 
-    public String addOrder(@ModelAttribute Order order) {
-        order.setOrderId(UUID.randomUUID().toString());
-        orderRepository.save(order);
-        return "redirect:/orders"; // Redirect to the orders page
+    @PostMapping("/createOrder")
+    public String createOrder(@ModelAttribute OrderDTO orderDTO, Model model) {
+        Order order = new Order();
+        order.setClientId(orderDTO.getClientId());
+        order.setTotal(BigDecimal.ZERO);
+        Order savedOrder = orderRepository.save(order);
+
+
+        BigDecimal total = BigDecimal.ZERO;
+
+        for (OrderItemDTO itemDTO : orderDTO.getOrderItems()) {
+            if (itemDTO.getQuantity() > 0) {
+                Product product = productsRepository.findById(itemDTO.getProductId())
+                        .orElseThrow(() -> new RuntimeException("Product not found"));
+
+
+                if (product.getPrice() == 0) {
+                    throw new RuntimeException("Product price cannot be null");
+                }
+
+                OrderItem orderItem = new OrderItem();
+                orderItem.setOrderId(savedOrder.getOrderId());
+                orderItem.setProductId(product.getProductId());
+                orderItem.setQuantity(itemDTO.getQuantity());
+
+
+                BigDecimal itemTotalPrice = BigDecimal.valueOf(product.getPrice());
+                orderItem.setPrice(itemTotalPrice);
+
+                total = total.add(itemTotalPrice);
+                orderItemRepository.save(orderItem);
+            }
+        }
+
+        savedOrder.setTotal(total);
+        orderRepository.save(savedOrder);
+
+        model.addAttribute("order", savedOrder);
+        return "orderSuccess";
     }
 }
