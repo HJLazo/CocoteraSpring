@@ -21,7 +21,7 @@ public class ClientController {
     private IClientRepository clientRepository;
 
     @GetMapping("/clients")
-    public String showProducts(Model model) {
+    public String showClients(Model model) {
         List<Client> clients = clientRepository.findAll();
         model.addAttribute("clients", clients);
         model.addAttribute("client", new Client());
@@ -29,7 +29,7 @@ public class ClientController {
     }
 
     @PostMapping("/addClient")
-    public String addProduct(@ModelAttribute Client client) {
+    public String addClient(@ModelAttribute Client client) {
         client.setClientId(UUID.randomUUID().toString());
         clientRepository.save(client);
         return "redirect:/clients";
