@@ -26,12 +26,11 @@
 			<figcaption>Pioneros en French Terry</figcaption>
 		</div>
 		<div class="categorias">
-			<a href="/" >Inicio</a>
-			<a href="/coleccion" class="selected">Colecciones</a>
-
+				<a href="/" >Inicio</a>
+				<a href="/coleccion" class="selected">Colecciones</a>
 		</div>
 		<div>
-	<a href="/carritoCompras">Mi Carrito</a>
+			<a href="/carritoCompras">Mi Carrito</a>
 		</div>
 	</nav>
 
@@ -132,16 +131,11 @@
 
 			</div>
 		</aside>
+
 		<div class="collection">
-			<img src="./assets/coleccion/foto1.jpeg" alt="">
-			<img src="./assets/coleccion/foto2.jpeg" alt="">
-			<img src="./assets/coleccion/foto3.jpeg" alt="">
-			<img src="./assets/coleccion/foto4.jpeg" alt="">
-			<img src="./assets/coleccion/foto5.jpeg" alt="">
-			<img src="./assets/coleccion/foto6.jpeg" alt="">
-			<img src="./assets/coleccion/foto7.jpeg" alt="">
-			<img src="./assets/coleccion/foto8.jpeg" alt="">
-			<img src="./assets/coleccion/foto9.jpeg" alt="">
+			<div th:each="producto : ${productos}">
+				<img th:src="${producto.url}" alt="Product Image">
+			</div>
 		</div>
 	</main>
 
