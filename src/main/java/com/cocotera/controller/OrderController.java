@@ -50,7 +50,6 @@ public class OrderController {
     public String createOrder(@ModelAttribute OrderDTO orderDTO, Model model) {
         Order order = new Order();
         try {
-            // Initialize the order
             order.setOrderId(UUID.randomUUID().toString());
 
             Client client = clientRepository.findById(orderDTO.getClientId())
@@ -59,41 +58,34 @@ public class OrderController {
 
             order.setClient(client);
 
-            order.setTotal(BigDecimal.ZERO); // Initialize total to zero
+            order.setTotal(BigDecimal.ZERO);
 
             // Save the order
             order = orderRepository.save(order);
         } catch (Exception e) {
-            // Handle the error (log, return an error message, etc.)
             System.out.println("Error saving order: " + e.getMessage());
             throw new RuntimeException("Error saving order: " + e.getMessage());
         }
 
         BigDecimal total = BigDecimal.ZERO;
 
-        // Iterate over each order item
         for (OrderItemDTO itemDTO : orderDTO.getOrderItems()) {
             if (itemDTO.getQuantity() > 0) {
                 try {
-                    // Find the product by ID
                     Product product = productsRepository.findById(itemDTO.getProductId())
                             .orElseThrow(() -> new RuntimeException("Product not found: " + itemDTO.getProductId()));
 
-                    // Create and initialize the order item
                     OrderItem orderItem = new OrderItem();
                     orderItem.setOrderItemId(UUID.randomUUID().toString());
                     orderItem.setOrderId(order.getOrderId());
                     orderItem.setProductId(product.getProductId());
                     orderItem.setQuantity(itemDTO.getQuantity());
 
-                    // Calculate the total price for the order item
                     BigDecimal itemTotalPrice = BigDecimal.valueOf(product.getPrice()).multiply(new BigDecimal(itemDTO.getQuantity()));
                     orderItem.setPrice(itemTotalPrice);
 
-                    // Add the item total price to the order total
                     total = total.add(itemTotalPrice);
 
-                    // Save the order item
                     orderItemRepository.save(orderItem);
                 } catch (Exception e) {
                     // Handle the error (log, return an error message, etc.)
@@ -104,11 +96,9 @@ public class OrderController {
         }
 
         try {
-            // Update and save the total for the order
             order.setTotal(total);
             orderRepository.save(order);
         } catch (Exception e) {
-            // Handle the error (log, return an error message, etc.)
             System.out.println("Error updating order total: " + e.getMessage());
             throw new RuntimeException("Error updating order total: " + e.getMessage());
         }

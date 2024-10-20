@@ -12,7 +12,7 @@ public class Order {
     private String orderId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "client_id", referencedColumnName = "clientId")  // Reference the clientId field in the Client entity
+    @JoinColumn(name = "client_id", referencedColumnName = "clientId")
     private Client client;
 
     private BigDecimal total;
