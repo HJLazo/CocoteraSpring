@@ -13,10 +13,9 @@
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>Order ID</th>
+            <th>ID Orden</th>
             <th>Client ID</th>
             <th>Total</th>
-            <th>Created At</th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -24,11 +23,10 @@
         <tr th:each="order : ${orders}">
             <td th:text="${order.orderId}"></td>
             <td th:text="${order.clientId}"></td>
-            <td th:text="${#numbers.formatDecimal(order.total, 2)}"></td>
-            <td th:text="${#dates.format(order.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+
+            <td th:text="${order.total}"></td>
             <td>
-                <!-- View details or edit links can go here -->
-                <a th:href="@{'/order/' + ${order.orderId}}" class="btn btn-primary">View</a>
+                <a th:href="@{'/order/' + ${order.orderId}}" class="btn btn-primary">Detalles</a>
             </td>
         </tr>
         </tbody>

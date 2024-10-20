@@ -12,6 +12,6 @@ public class Order {
     @Id
     private String orderId;
     private String clientId;
-    private BigDecimal total;
+    private BigDecimal total = BigDecimal.ZERO;
 
 }

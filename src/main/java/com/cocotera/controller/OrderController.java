@@ -48,44 +48,65 @@ public class OrderController {
 
     @PostMapping("/createOrder")
     public String createOrder(@ModelAttribute OrderDTO orderDTO, Model model) {
-        if (orderDTO.getOrderItems() == null || orderDTO.getOrderItems().isEmpty()) {
-            throw new RuntimeException("No items in the order");
-        }
-
         Order order = new Order();
-        order.setOrderId(UUID.randomUUID().toString());
-        order.setClientId(orderDTO.getClientId());
-        order.setTotal(BigDecimal.ZERO);
-        Order savedOrder = orderRepository.save(order);
+        try {
+            // Initialize the order
+            order.setOrderId(UUID.randomUUID().toString());
+            order.setClientId(orderDTO.getClientId());
+            order.setTotal(BigDecimal.ZERO); // Initialize total to zero
+
+            // Save the order
+            order = orderRepository.save(order);
+        } catch (Exception e) {
+            // Handle the error (log, return an error message, etc.)
+            System.out.println("Error saving order: " + e.getMessage());
+            throw new RuntimeException("Error saving order: " + e.getMessage());
+        }
 
         BigDecimal total = BigDecimal.ZERO;
 
+        // Iterate over each order item
         for (OrderItemDTO itemDTO : orderDTO.getOrderItems()) {
             if (itemDTO.getQuantity() > 0) {
-                Product product = productsRepository.findById(itemDTO.getProductId())
-                        .orElseThrow(() -> new RuntimeException("Product not found"));
+                try {
+                    // Find the product by ID
+                    Product product = productsRepository.findById(itemDTO.getProductId())
+                            .orElseThrow(() -> new RuntimeException("Product not found: " + itemDTO.getProductId()));
 
-                if (product.getPrice() == 0) {
-                    throw new RuntimeException("Product price cannot be null");
+                    // Create and initialize the order item
+                    OrderItem orderItem = new OrderItem();
+                    orderItem.setOrderItemId(UUID.randomUUID().toString());
+                    orderItem.setOrderId(order.getOrderId());
+                    orderItem.setProductId(product.getProductId());
+                    orderItem.setQuantity(itemDTO.getQuantity());
+
+                    // Calculate the total price for the order item
+                    BigDecimal itemTotalPrice = BigDecimal.valueOf(product.getPrice()).multiply(new BigDecimal(itemDTO.getQuantity()));
+                    orderItem.setPrice(itemTotalPrice);
+
+                    // Add the item total price to the order total
+                    total = total.add(itemTotalPrice);
+
+                    // Save the order item
+                    orderItemRepository.save(orderItem);
+                } catch (Exception e) {
+                    // Handle the error (log, return an error message, etc.)
+                    System.out.println("Error saving order item: " + e.getMessage());
+                    throw new RuntimeException("Error saving order item for product " + itemDTO.getProductId() + ": " + e.getMessage());
                 }
-
-                OrderItem orderItem = new OrderItem();
-                orderItem.setOrderId(savedOrder.getOrderId());
-                orderItem.setProductId(product.getProductId());
-                orderItem.setQuantity(itemDTO.getQuantity());
-
-                BigDecimal itemTotalPrice = BigDecimal.valueOf(product.getPrice());
-                orderItem.setPrice(itemTotalPrice);
-
-                total = total.add(itemTotalPrice);
-                orderItemRepository.save(orderItem);
             }
         }
 
-        savedOrder.setTotal(total);
-        orderRepository.save(savedOrder);
+        try {
+            // Update and save the total for the order
+            order.setTotal(total);
+            orderRepository.save(order);
+        } catch (Exception e) {
+            // Handle the error (log, return an error message, etc.)
+            System.out.println("Error updating order total: " + e.getMessage());
+            throw new RuntimeException("Error updating order total: " + e.getMessage());
+        }
 
-        model.addAttribute("order", savedOrder);
         return "redirect:/orderList";
     }
 
