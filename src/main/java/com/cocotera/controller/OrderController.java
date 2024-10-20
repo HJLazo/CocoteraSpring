@@ -52,7 +52,13 @@ public class OrderController {
         try {
             // Initialize the order
             order.setOrderId(UUID.randomUUID().toString());
-            order.setClientId(orderDTO.getClientId());
+
+            Client client = clientRepository.findById(orderDTO.getClientId())
+                    .orElseThrow(() -> new RuntimeException("Client not found: " + orderDTO.getClientId()));
+
+
+            order.setClient(client);
+
             order.setTotal(BigDecimal.ZERO); // Initialize total to zero
 
             // Save the order

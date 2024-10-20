@@ -3,15 +3,17 @@ package com.cocotera.models;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 
 @Entity
-@Table(name = "orders")
 @Data
+@Table(name = "orders")
 public class Order {
     @Id
     private String orderId;
-    private String clientId;
-    private BigDecimal total = BigDecimal.ZERO;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_id", referencedColumnName = "clientId")  // Reference the clientId field in the Client entity
+    private Client client;
+
+    private BigDecimal total;
 }
