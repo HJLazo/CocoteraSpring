@@ -10,49 +10,48 @@
 <div th:replace="fragments/navbar :: navbar"></div>
 <div class="container mt-5">
     <div class="row">
-        <div class="col-md-6">
-            <h3>Order Products</h3>
+        <div >
+            <h3>Orden</h3>
 
             <form action="/createOrder" method="post" th:object="${orderDTO}">
 
                 <div class="form-group">
-                    <label for="clientId">Client</label>
+                    <label for="clientId">Cliente</label>
                     <select id="clientId" th:field="*{clientId}" class="form-control" required>
-                        <option value="" disabled selected>Select a client</option>
+                        <option value="" disabled selected>Selecciona un Cliente</option>
                         <option th:each="client : ${clients}" th:value="${client.clientId}" th:text="${client.name}"></option>
                     </select>
                 </div>
 
-                <div class="products">
-                    <div th:each="product, productStat : ${products}">
-                        <div class="product-item">
+                <div>
+                    <h3>Resumen de Orden</h3>
+                    <div id="orderSummary">
+                        <p><strong>Total Productos: </strong><span id="totalItems">0</span></p>
+                        <p><strong>Total Precio: </strong>$<span id="totalPrice">0.00</span></p>
+                    </div>
+                </div>
+
+                <div class="card-group">
+                    <div th:each="product, productStat : ${products}" class="card p-2"  style="width: 200px;">
                             <img th:src="${product.url}" style="width: 100px; height: auto;" alt="Product Image"/>
-                            <span th:text="${product.name}"></span>
                             <span class="product-price" th:text="${product.price}"></span>
                             <p th:text="'Product ID: ' + ${product.productId}"></p>
 
                             <!-- Buttons for increasing and decreasing the quantity -->
                             <button type="button" class="btn btn-danger" th:onclick="updateQuantity([[${product.productId}]], [[${product.price}]], -1)">-</button>
-                            <input type="text" th:id="'quantity_' + ${product.productId}" value="0" readonly/>
+                            <input type="text" th:id="'quantity_' + ${product.productId}" value="0" class="my-2" readonly />
                             <button type="button" class="btn btn-success" th:onclick="updateQuantity([[${product.productId}]], [[${product.price}]], 1)">+</button>
 
                             <input type="hidden" th:name="orderItems[__${productStat.index}__].productId" th:value="${product.productId}" />
                             <input type="hidden" th:field="*{orderItems[__${productStat.index}__].quantity}" th:id="'hidden_quantity_' + ${product.productId}" value="0" />
-                        </div>
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Create Order</button>
+                <button type="submit" class="btn btn-primary mt-4">Crear Orden</button>
             </form>
         </div>
 
-        <div class="col-md-6">
-            <h3>Order Summary</h3>
-            <div id="orderSummary">
-                <p><strong>Total Items: </strong><span id="totalItems">0</span></p>
-                <p><strong>Total Price: </strong>$<span id="totalPrice">0.00</span></p>
-            </div>
-        </div>
+
     </div>
 </div>
 
