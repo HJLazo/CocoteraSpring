@@ -23,11 +23,9 @@
         <tr th:each="order : ${orders}">
             <td th:text="${order.orderId}"></td>
             <td th:text="${order.client.name}"></td>
-
-
             <td th:text="${order.total}"></td>
             <td>
-                <a th:href="@{'/order/' + ${order.orderId}}" class="btn btn-primary">Detalles</a>
+                <a th:href="@{/filtros(orderId=${order.orderId})}" class="btn btn-success" target="_blank">Listado de la Orden</a>
             </td>
         </tr>
         </tbody>
