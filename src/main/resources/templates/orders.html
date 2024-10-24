@@ -34,10 +34,8 @@
                 <div class="card-group">
                     <div th:each="product, productStat : ${products}" class="card p-2"  style="width: 200px;">
                             <img th:src="${product.url}" style="width: 100px; height: auto;" alt="Product Image"/>
-                            <span class="product-price" th:text="${product.price}"></span>
-                            <p th:text="'Product ID: ' + ${product.productId}"></p>
+                            <span class="product-price" th:text="'Precio: ' + ${product.price}"></span>
 
-                            <!-- Buttons for increasing and decreasing the quantity -->
                             <button type="button" class="btn btn-danger" th:onclick="updateQuantity([[${product.productId}]], [[${product.price}]], -1)">-</button>
                             <input type="text" th:id="'quantity_' + ${product.productId}" value="0" class="my-2" readonly />
                             <button type="button" class="btn btn-success" th:onclick="updateQuantity([[${product.productId}]], [[${product.price}]], 1)">+</button>
