@@ -10,7 +10,10 @@ import com.cocotera.models.Client;
 import com.cocotera.models.Order;
 import com.cocotera.models.OrderItem;
 import com.cocotera.models.Product;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,11 +40,28 @@ public class OrderController {
     private IOrderItemRepository orderItemRepository;
 
     @GetMapping("/orders")
-    public String showOrderForm(Model model) {
+    public String showOrderForm(Model model, HttpSession session) {
+
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        boolean isAuthenticated = authentication != null && authentication.isAuthenticated();
+//
+//        if (isAuthenticated) {
+//            System.out.println("Authenticated User: " + authentication.getName());
+//            System.out.println(authentication.getDetails());
+//        } else {
+//            System.out.println("No user is authenticated.");
+//        }
+
+
+
+//        System.out.println("-------------------------");
+//        System.out.println(isAuthenticated);
+//        System.out.println("-------------------------");
         List<Client> clients = clientRepository.findAll();
         List<Product> products = productsRepository.findAll();
         model.addAttribute("products", products);
         model.addAttribute("clients", clients);
+//        model.addAttribute("isAuthenticated", isAuthenticated);
         model.addAttribute("orderDTO", new OrderDTO());
         return "orders";
     }
