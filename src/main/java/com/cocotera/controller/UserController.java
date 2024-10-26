@@ -24,7 +24,7 @@ public class UserController {
     private IUserRepository userRepository;
 
     @GetMapping("/users")
-    public String showClients(Model model) {
+    public String showUser(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean isAuthenticated = authentication != null && authentication.isAuthenticated();
         model.addAttribute("isAuthenticated", isAuthenticated);
@@ -35,7 +35,7 @@ public class UserController {
     }
 
     @PostMapping("/addUser")
-    public String addClient(@ModelAttribute User user) {
+    public String addUser(@ModelAttribute User user) {
         user.setUserId(UUID.randomUUID().toString());
         userRepository.save(user);
         return "redirect:/users";

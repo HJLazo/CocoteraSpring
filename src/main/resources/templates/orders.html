@@ -16,7 +16,7 @@
             <h3>Orden</h3>
 
             <form action="/createOrder" method="post" th:object="${orderDTO}">
-
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                 <div class="form-group">
                     <label for="clientId">Cliente</label>
                     <select id="clientId" th:field="*{clientId}" class="form-control" required>
