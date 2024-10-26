@@ -42,26 +42,14 @@ public class OrderController {
     @GetMapping("/orders")
     public String showOrderForm(Model model, HttpSession session) {
 
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        boolean isAuthenticated = authentication != null && authentication.isAuthenticated();
-//
-//        if (isAuthenticated) {
-//            System.out.println("Authenticated User: " + authentication.getName());
-//            System.out.println(authentication.getDetails());
-//        } else {
-//            System.out.println("No user is authenticated.");
-//        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAuthenticated = authentication != null && authentication.isAuthenticated();
+        model.addAttribute("isAuthenticated", isAuthenticated);
 
-
-
-//        System.out.println("-------------------------");
-//        System.out.println(isAuthenticated);
-//        System.out.println("-------------------------");
         List<Client> clients = clientRepository.findAll();
         List<Product> products = productsRepository.findAll();
         model.addAttribute("products", products);
         model.addAttribute("clients", clients);
-//        model.addAttribute("isAuthenticated", isAuthenticated);
         model.addAttribute("orderDTO", new OrderDTO());
         return "orders";
     }
@@ -129,6 +117,10 @@ public class OrderController {
 
     @GetMapping("/orderList")
     public String showOrderList(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAuthenticated = authentication != null && authentication.isAuthenticated();
+        model.addAttribute("isAuthenticated", isAuthenticated);
+
         List<Order> orders = orderRepository.findAll();
         model.addAttribute("orders", orders);
         return "orderList";

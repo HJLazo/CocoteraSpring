@@ -23,7 +23,6 @@
                     <a class="nav-link" th:href="@{/orderList}">Lista de Ordenes</a>
                 </li>
 
-                <!-- Ensure isAuthenticated is used here -->
                 <li class="nav-item" th:if="${isAuthenticated}">
                     <form action="#" th:action="@{/logout}" method="post" style="display: inline;">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>

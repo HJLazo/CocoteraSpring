@@ -34,10 +34,6 @@ public class ReportesController {
 
     @GetMapping("/reportes")
     public void reportes(HttpServletResponse response, Model model){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        boolean isAuthenticated = authentication != null && authentication.isAuthenticated();
-        model.addAttribute("isAuthenticated", isAuthenticated);
-
         response.setHeader("Content-Disposition", "attachment; filename=\"reporte.pdf\";");
         response.setContentType("application/pdf");
         try {
@@ -51,7 +47,7 @@ public class ReportesController {
     }
 
     @GetMapping("filtros")
-    public void reporteConFiltro(HttpServletResponse response, @RequestParam String orderId) {
+    public void reporteConFiltro(HttpServletResponse response, @RequestParam String orderId, Model model) {
         response.setHeader("Content-Disposition", "inline");
         response.setContentType("application/pdf");
 
