@@ -22,7 +22,7 @@ public class AdminUserInitializer implements CommandLineRunner {
             User adminUser = new User();
             adminUser.setUsername("admin");
             adminUser.setPassword(passwordEncoder.encode("123456"));
-            adminUser.setRole("ADMIN");
+            adminUser.setRole(0);
             adminUser.setUserId(UUID.randomUUID().toString());
             userRepository.save(adminUser);
             System.out.println("Admin user created successfully.");

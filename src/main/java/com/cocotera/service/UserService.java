@@ -34,16 +34,23 @@ public class UserService implements UserDetailsService {
             System.out.println("User not found: " + username);
             throw new UsernameNotFoundException("User not found");
         }
-
-        System.out.println("--------------------------");
-        System.out.println("User found: " + username);
-        System.out.println("User found: " + user.getPassword());
-        System.out.println("--------------------------");
-
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
+        switch (user.getRole()) {
+            case 0:
+                authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+                break;
+            case 1:
+                authorities.add(new SimpleGrantedAuthority("ROLE_OPERATOR"));
+                break;
+            case 2:
+                authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid role: " + user.getRole());
+        }
 
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
     }
+
 
 }
