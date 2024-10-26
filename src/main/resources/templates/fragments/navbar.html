@@ -22,6 +22,9 @@
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/orderList}">Lista de Ordenes</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/users}">Lista de Operadores</a>
+                </li>
 
                 <li class="nav-item" th:if="${isAuthenticated}">
                     <form action="#" th:action="@{/logout}" method="post" style="display: inline;">

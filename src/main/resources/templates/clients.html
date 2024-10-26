@@ -27,7 +27,7 @@
                     <label for="address" class="form-label">Direccion</label>
                     <input type="text" class="form-control" id="address" name="address" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Add Client</button>
+                <button type="submit" class="btn btn-primary">Agregar Cliente</button>
             </form>
         </div>
 
@@ -37,9 +37,9 @@
             <div th:each="client : ${clients}">
                 <div class="card mb-3">
                     <div class="card-body">
-                        <h5 class="card-title" th:text="${client.name}">Client Name</h5>
+                        <h5 class="card-title" th:text="${client.name}">Nombre de Cliente</h5>
                         <p><strong>RUC:</strong> <span th:text="${client.ruc}">RUC</span></p>
-                        <p><strong>Address:</strong> <span th:text="${client.address}">Client Address</span></p>
+                        <p><strong>Address:</strong> <span th:text="${client.address}">Direccion</span></p>
                     </div>
                 </div>
             </div>
