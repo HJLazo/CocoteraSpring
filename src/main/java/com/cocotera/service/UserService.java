@@ -41,17 +41,9 @@ public class UserService implements UserDetailsService {
         System.out.println("--------------------------");
 
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(user.getRole()));
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
 
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
-    }
-
-    public User registerUser(String username, String password) {
-        User user = new User();
-        user.setUsername(username);
-        user.setUserId(UUID.randomUUID().toString());
-        user.setPassword(passwordEncoder.encode(password));
-        return userRepository.save(user);
     }
 
 }
