@@ -23,7 +23,7 @@ public class UserService implements UserDetailsService {
     @Autowired
     private IUserRepository userRepository;
 
-    @Lazy // Use lazy initialization to avoid circular dependency
+    @Lazy
     @Autowired
     private PasswordEncoder passwordEncoder;
 
